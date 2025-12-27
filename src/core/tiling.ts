@@ -34,7 +34,7 @@ export function calculateTileLayout(
   const effectiveWidth = tileWidthMm + groutMm;
   const effectiveHeight = tileHeightMm + groutMm;
 
-  // Pattern'e göre layout hesapla
+  // Pattern'e göre layout hesapla.
   let layout: TileLayout;
   
   switch (settings.pattern) {
