@@ -25,7 +25,7 @@ export function calculateTileLayout(
     throw new Error('Oda kapalı bir poligon olmalı');
   }
 
-  // Malzeme ölçülerini mm'ye çevir
+  // Malzeme ölçülerini mm'ye çevir.
   const tileWidthMm = convertLengthToMm(tile.width);
   const tileHeightMm = convertLengthToMm(tile.height);
   const groutMm = convertLengthToMm(tile.grout);
