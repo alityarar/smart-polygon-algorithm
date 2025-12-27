@@ -1,0 +1,162 @@
+/* App.css - Minimal styles */
+
+/* ✅ YENİ: Kesim Listesi Stilleri */
+.cut-list-section {
+  margin-top: 30px;
+  padding: 20px;
+  background: #f5f5f5;
+  border-radius: 12px;
+}
+
+.cut-list-section h3 {
+  color: #F44336;
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.cut-list-description {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 20px;
+}
+
+.cut-items {
+  display: grid;
+  gap: 20px;
+}
+
+.cut-item {
+  background: white;
+  border-radius: 8px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  border: 2px solid #ddd;
+}
+
+.cut-item-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+  padding-bottom: 15px;
+  border-bottom: 2px solid #f0f0f0;
+}
+
+.cut-item-header h4 {
+  margin: 0;
+  font-size: 18px;
+  color: #333;
+}
+
+.cut-number {
+  display: inline-block;
+  background: #F44336;
+  color: white;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: bold;
+  margin-right: 8px;
+}
+
+.cut-id {
+  font-size: 12px;
+  color: #999;
+  font-family: monospace;
+}
+
+.cut-visual {
+  margin: 20px 0;
+  display: flex;
+  justify-content: center;
+}
+
+.cut-diagram-canvas {
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  max-width: 100%;
+  height: auto;
+}
+
+.cut-details {
+  margin-top: 20px;
+}
+
+.cut-measurements {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+
+.measurement {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  background: #f9f9f9;
+  border-radius: 6px;
+  border-left: 4px solid #2196F3;
+}
+
+.measurement strong {
+  min-width: 140px;
+  color: #555;
+  font-size: 14px;
+}
+
+.measurement span {
+  font-size: 14px;
+  color: #333;
+  font-weight: 500;
+}
+
+.measurement small {
+  display: block;
+  color: #999;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+.cut-lines,
+.scraps-produced {
+  margin-top: 15px;
+  padding: 15px;
+  background: #fff9e6;
+  border-radius: 6px;
+  border-left: 4px solid #FFC107;
+}
+
+.cut-lines strong,
+.scraps-produced strong {
+  display: block;
+  margin-bottom: 8px;
+  color: #333;
+}
+
+.cut-lines ul,
+.scraps-produced ul {
+  margin: 0;
+  padding-left: 20px;
+}
+
+.cut-lines li,
+.scraps-produced li {
+  margin: 4px 0;
+  color: #555;
+  font-size: 13px;
+}
+
+/* Responsive */
+@media (min-width: 768px) {
+  .cut-items {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1200px) {
+  .cut-items {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
