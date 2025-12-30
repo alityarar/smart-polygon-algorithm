@@ -30,7 +30,7 @@ export function calculateTileLayout(
   const tileHeightMm = convertLengthToMm(tile.height);
   const groutMm = convertLengthToMm(tile.grout);
 
-  // Efektif ölçüler (derz dahil) - sadece grid spacing için.
+  // Efektif ölçüler (derz dahil) - sadece grid spacing için
   const effectiveWidth = tileWidthMm + groutMm;
   const effectiveHeight = tileHeightMm + groutMm;
 
