@@ -113,10 +113,20 @@ interface RequiredPiece {
   id: string;
   x: number;
   y: number;
+
+  // ✅ half-offset ve diğerleri için lazım
   requiredWidth: number;
   requiredHeight: number;
-  isFullTile: boolean; // Tam seramik boyutunda mı?
+
+  isFullTile: boolean;
+
+  // ✅ polygon-based grid edge parça için opsiyonel
+  usedPieceWorld?: Point[];
+  usedAreaMm2?: number;
+  intersectionRatio?: number;
 }
+
+
 
 /**
  * Bir noktanın poligon içinde olup olmadığını kontrol et (Ray Casting)
@@ -139,10 +149,6 @@ function isPointInPolygon(point: Point, polygon: Point[]): boolean {
   
   return inside;
 }
-
-/**
- * Grid (hizalı) pattern hesaplama - GELIŞMIŞ VERSIYON
- */
 function calculateGridLayout(
   room: RoomShape,
   effectiveWidth: number,
@@ -154,152 +160,68 @@ function calculateGridLayout(
   const bbox = getBoundingBox(room.points);
   const numCols = Math.ceil(bbox.width / effectiveWidth);
   const numRows = Math.ceil(bbox.height / effectiveHeight);
-  
-  console.log('═══════════════════════════════════════');
-  console.log('🏗️  GRID PATTERN - ADVANCED');
-  console.log('═══════════════════════════════════════');
-  console.log('Oda boyutu:', bbox.width.toFixed(0), 'x', bbox.height.toFixed(0), 'mm');
-  console.log('Seramik boyutu:', actualWidth, 'x', actualHeight, 'mm');
-  console.log('Grid pozisyonları:', numCols, 'x', numRows);
-  console.log('Artık kullanımı:', useScrap ? 'AÇIK' : 'KAPALI');
-  
-  const cutSafety = 2.5; // kerf + tolerans
-  const minScrapSize = 80;
-  
+
+  const cutSafety = 2.5; // kerf + tolerans (şimdilik)
+  const tileArea = actualWidth * actualHeight;
+
+  const MIN_INTERSECTION_RATIO = 0.03;
+  const FULL_TILE_RATIO = 0.98;
+
+  // ✅ PHASE 1: polygon-based required pieces
   const requiredPieces: RequiredPiece[] = [];
   let pieceId = 0;
-  
-  // PHASE 1: Geometri analizi
+
   for (let row = 0; row < numRows; row++) {
     const y = bbox.minY + row * effectiveHeight;
-    
+
     for (let col = 0; col < numCols; col++) {
       const x = bbox.minX + col * effectiveWidth;
-      
-      const corners = [
-        { x, y },
-        { x: x + actualWidth, y },
-        { x: x + actualWidth, y: y + actualHeight },
-        { x, y: y + actualHeight },
-      ];
-      
-      const center = { x: x + actualWidth / 2, y: y + actualHeight / 2 };
-      const cornersInside = corners.filter(c => isPointInPolygon(c, room.points)).length;
-      const centerInside = isPointInPolygon(center, room.points);
-      
-      if (cornersInside > 0 || centerInside) {
-        const isFullTile = cornersInside === 4;
-        
-        let requiredWidth = actualWidth;
-        let requiredHeight = actualHeight;
-        
-        if (!isFullTile) {
-          const isLastCol = col === numCols - 1;
-          const isLastRow = row === numRows - 1;
-          
-          if (isLastCol) {
-            const remainingWidth = bbox.maxX - x;
-            requiredWidth = Math.min(actualWidth, Math.max(10, remainingWidth));
-          }
-          if (isLastRow) {
-            const remainingHeight = bbox.maxY - y;
-            requiredHeight = Math.min(actualHeight, Math.max(10, remainingHeight));
-          }
-        }
-        
-        requiredPieces.push({
-          id: `piece-${pieceId++}`,
-          x,
-          y,
-          requiredWidth,
-          requiredHeight,
-          isFullTile,
-        });
+
+      const tilePoly = createAxisAlignedRectPolygon(x, y, actualWidth, actualHeight);
+      const interPolys = intersectPolygons(tilePoly, room.points);
+      if (interPolys.length === 0) continue;
+
+      const usedArea = interPolys.reduce((sum, p) => sum + calculatePolygonArea(p), 0);
+      const ratio = usedArea / tileArea;
+      if (ratio < MIN_INTERSECTION_RATIO) continue;
+
+      const isFullTile = ratio >= FULL_TILE_RATIO;
+
+      let usedPieceWorld: Point[] | undefined;
+      if (!isFullTile) {
+        usedPieceWorld = interPolys
+          .map(p => ({ p, a: calculatePolygonArea(p) }))
+          .sort((a, b) => b.a - a.a)[0]?.p;
       }
+
+      requiredPieces.push({
+        id: `piece-${pieceId++}`,
+        x,
+        y,
+        requiredWidth: actualWidth,
+        requiredHeight: actualHeight,
+        isFullTile,
+        usedPieceWorld,
+        usedAreaMm2: usedArea,
+        intersectionRatio: ratio,
+      });
     }
   }
-  
-  console.log('Gerekli parça:', requiredPieces.length, '(Tam:', requiredPieces.filter(p => p.isFullTile).length, '| Kesilecek:', requiredPieces.filter(p => !p.isFullTile).length + ')');
-  
-  // PHASE 2: Malzeme tahsisi + artık yönetimi
-  const scrapInventory: ScrapPoly[] = [];
+
+  // ✅ PHASE 2: allocation + output
   const placedTiles: PlacedTile[] = [];
   const cutList: CutInstruction[] = [];
-  
+
   let fullTilesConsumed = 0;
   let cutTilesConsumed = 0;
   let scrapUsedCount = 0;
-  
+
   for (const piece of requiredPieces) {
-    let allocatedFromScrap = false;
-    let scrapSource: ScrapPoly | null = null;
-    
-    if (useScrap && !piece.isFullTile) {
-      // Artık envanterinde uygun parça ara
-      const usableScraps = scrapInventory
-        .filter(s => !s.used && s.bboxLocal.width >= piece.requiredWidth + cutSafety && s.bboxLocal.height >= piece.requiredHeight + cutSafety)
-        .sort((a, b) => a.areaMm2 - b.areaMm2);
-      
-      if (usableScraps.length > 0) {
-        scrapSource = usableScraps[0];
-        scrapSource.used = true;
-        allocatedFromScrap = true;
-        scrapUsedCount++;
-      }
-    }
-    
-    if (!allocatedFromScrap) {
-      if (piece.isFullTile) {
-        fullTilesConsumed++;
-      } else {
-        cutTilesConsumed++;
-        
-        // Artık oluştur
-        if (useScrap) {
-          const leftoverWidth = actualWidth - piece.requiredWidth;
-          const leftoverHeight = actualHeight - piece.requiredHeight;
-          
-          // Sağ artık
-          if (leftoverWidth >= minScrapSize && piece.requiredHeight >= minScrapSize) {
-            scrapInventory.push({
-              id: `scrap-R-${scrapInventory.length + 1}`,
-              polygonWorld: [],
-              polygonLocal: [],
-              areaMm2: leftoverWidth * piece.requiredHeight,
-              bboxLocal: {
-                minX: 0,
-                minY: 0,
-                maxX: leftoverWidth,
-                maxY: piece.requiredHeight,
-                width: leftoverWidth,
-                height: piece.requiredHeight,
-              },
-              used: false,
-            });
-          }
-          
-          // Üst artık
-          if (leftoverHeight >= minScrapSize && piece.requiredWidth >= minScrapSize) {
-            scrapInventory.push({
-              id: `scrap-T-${scrapInventory.length + 1}`,
-              polygonWorld: [],
-              polygonLocal: [],
-              areaMm2: piece.requiredWidth * leftoverHeight,
-              bboxLocal: {
-                minX: 0,
-                minY: 0,
-                maxX: piece.requiredWidth,
-                maxY: leftoverHeight,
-                width: piece.requiredWidth,
-                height: leftoverHeight,
-              },
-              used: false,
-            });
-          }
-        }
-      }
-    }
-    
+    const allocatedFromScrap = false;
+
+    if (piece.isFullTile) fullTilesConsumed++;
+    else cutTilesConsumed++;
+
     placedTiles.push({
       id: piece.id,
       x: piece.x + actualWidth / 2,
@@ -311,124 +233,44 @@ function calculateGridLayout(
       isFromScrap: allocatedFromScrap,
       sourceType: allocatedFromScrap ? 'scrap' : (piece.isFullTile ? 'full' : 'cut'),
     });
-    
-    // Kesim talimatı oluştur (kesilecek parçalar için)
-    if (!piece.isFullTile) {
-      const usedPieceLocal = [
-        { x: 0, y: 0 },
-        { x: piece.requiredWidth, y: 0 },
-        { x: piece.requiredWidth, y: piece.requiredHeight },
-        { x: 0, y: piece.requiredHeight },
-      ];
-      
-      const bboxLocal = {
-        minX: 0,
-        minY: 0,
-        maxX: piece.requiredWidth,
-        maxY: piece.requiredHeight,
-        width: piece.requiredWidth,
-        height: piece.requiredHeight,
-      };
-      
-      const cutLines: Array<{ from: Point; to: Point; lengthMm: number }> = [];
-      
-      if (piece.requiredWidth < actualWidth) {
-        cutLines.push({
-          from: { x: piece.requiredWidth, y: 0 },
-          to: { x: piece.requiredWidth, y: actualHeight },
-          lengthMm: actualHeight,
-        });
-      }
-      
-      if (piece.requiredHeight < actualHeight) {
-        cutLines.push({
-          from: { x: 0, y: piece.requiredHeight },
-          to: { x: actualWidth, y: piece.requiredHeight },
-          lengthMm: actualWidth,
-        });
-      }
-      
-      const scrapsProduced: CutInstruction['scrapsProduced'] = [];
-      
-      if (!allocatedFromScrap && useScrap) {
-        const leftoverWidth = actualWidth - piece.requiredWidth;
-        const leftoverHeight = actualHeight - piece.requiredHeight;
-        
-        if (leftoverWidth >= minScrapSize && piece.requiredHeight >= minScrapSize) {
-          scrapsProduced.push({
-            scrapId: `scrap-R-${piece.id}`,
-            areaMm2: leftoverWidth * piece.requiredHeight,
-            verticesLocal: [
-              { x: piece.requiredWidth, y: 0 },
-              { x: actualWidth, y: 0 },
-              { x: actualWidth, y: piece.requiredHeight },
-              { x: piece.requiredWidth, y: piece.requiredHeight },
-            ],
-            bboxLocal: {
-              minX: piece.requiredWidth,
-              minY: 0,
-              maxX: actualWidth,
-              maxY: piece.requiredHeight,
-              width: leftoverWidth,
-              height: piece.requiredHeight,
-            },
-          });
-        }
-        
-        if (leftoverHeight >= minScrapSize && piece.requiredWidth >= minScrapSize) {
-          scrapsProduced.push({
-            scrapId: `scrap-T-${piece.id}`,
-            areaMm2: piece.requiredWidth * leftoverHeight,
-            verticesLocal: [
-              { x: 0, y: piece.requiredHeight },
-              { x: piece.requiredWidth, y: piece.requiredHeight },
-              { x: piece.requiredWidth, y: actualHeight },
-              { x: 0, y: actualHeight },
-            ],
-            bboxLocal: {
-              minX: 0,
-              minY: piece.requiredHeight,
-              maxX: piece.requiredWidth,
-              maxY: actualHeight,
-              width: piece.requiredWidth,
-              height: leftoverHeight,
-            },
-          });
-        }
-      }
-      
+
+    // ✅ polygon-based cut instruction
+    if (!piece.isFullTile && piece.usedPieceWorld && piece.usedPieceWorld.length >= 3) {
+      const centerX = piece.x + actualWidth / 2;
+      const centerY = piece.y + actualHeight / 2;
+
+      const usedPieceLocal = piece.usedPieceWorld.map(p => worldToLocalNoRotate(p, centerX, centerY));
+      const bboxLocal = calculateBoundingBox(usedPieceLocal);
+      const cutLines = identifyCutLines(usedPieceLocal, actualWidth, actualHeight);
+
       cutList.push({
         tileIndex: cutList.length + 1,
         tileId: piece.id,
         model: 'B',
         rotationDeg: 0,
-        tileCenterWorld: { x: piece.x + actualWidth / 2, y: piece.y + actualHeight / 2 },
+        tileCenterWorld: { x: centerX, y: centerY },
         usedPiece: {
-          areaMm2: piece.requiredWidth * piece.requiredHeight,
-          verticesWorld: usedPieceLocal.map(p => ({ x: piece.x + p.x, y: piece.y + p.y })),
+          areaMm2: piece.usedAreaMm2 ?? calculatePolygonArea(piece.usedPieceWorld),
+          verticesWorld: piece.usedPieceWorld,
           verticesLocal: usedPieceLocal,
           bboxLocal,
         },
         cutLinesLocal: cutLines,
-        scrapsProduced,
-        fromScrap: allocatedFromScrap ? { scrapId: scrapSource!.id, consumedAreaMm2: piece.requiredWidth * piece.requiredHeight, remainingScraps: [] } : undefined,
+        scrapsProduced: [],
         nominalVsCut: {
-          nominalBboxLocal: { w: piece.requiredWidth, h: piece.requiredHeight },
+          nominalBboxLocal: { w: bboxLocal.width, h: bboxLocal.height },
           recommendedCutBboxLocal: {
-            w: Math.max(0, piece.requiredWidth - cutSafety),
-            h: Math.max(0, piece.requiredHeight - cutSafety),
+            w: Math.max(0, bboxLocal.width - cutSafety),
+            h: Math.max(0, bboxLocal.height - cutSafety),
           },
           cutSafetyMm: cutSafety,
         },
       });
     }
   }
-  
+
   const totalTilesNeeded = fullTilesConsumed + cutTilesConsumed;
-  const wastePercentage = calculateWastePercentage(room.area || 0, totalTilesNeeded, actualWidth * actualHeight);
-  
-  console.log('📊 Sonuç: Tam:', fullTilesConsumed, '| Kesim:', cutTilesConsumed, '| Artık kullanımı:', scrapUsedCount, '| Toplam:', totalTilesNeeded);
-  console.log('Fire:', wastePercentage.toFixed(1) + '%', '| Kesim listesi:', cutList.length, 'parça');
+  const wastePercentage = calculateWastePercentage(room.area || 0, totalTilesNeeded, tileArea);
 
   return {
     tiles: placedTiles,
@@ -442,6 +284,12 @@ function calculateGridLayout(
   };
 }
 
+
+
+
+
+  
+  
 /**
  * Half-offset (yarım kaydırmalı / tuğla dizimi) pattern hesaplama
  * 
@@ -587,11 +435,14 @@ function calculateHalfOffsetLayout(
     totalCutArea += piece.requiredWidth * piece.requiredHeight;
   }
   
-  const tileArea = actualWidth * actualHeight;
+
   
   // Kesilmiş parçalar için kaç seramik lazım?
   // Alan bazlı hesaplama: toplam kesim alanı / seramik alanı
+  const tileArea = actualWidth * actualHeight;
   const tilesForCuts = Math.ceil(totalCutArea / tileArea);
+  
+
   
   console.log('\nKesim analizi:');
   console.log('  - Kesilmiş parça sayısı:', cutPieces.length);
@@ -742,6 +593,10 @@ function rotatePoint(x: number, y: number, angleDeg: number): { x: number; y: nu
   };
 }
 
+function worldToLocalNoRotate(world: Point, centerX: number, centerY: number): Point {
+  return { x: world.x - centerX, y: world.y - centerY };
+}
+
 /**
  * Diagonal kafes merkez noktalarını üretir
  */
@@ -889,26 +744,48 @@ function calculateBoundingBox(vertices: Point[]): {
   };
 }
 
+function createAxisAlignedRectPolygon(
+  x: number,
+  y: number,
+  w: number,
+  h: number
+): Point[] {
+  return [
+    { x, y },
+    { x: x + w, y },
+    { x: x + w, y: y + h },
+    { x, y: y + h },
+  ];
+}
+
+
 /**
  * İki poligonun kesişimini hesapla (polygon-clipping kullanarak)
  */
 function intersectPolygons(poly1: Point[], poly2: Point[]): Point[][] {
   try {
-    // polygon-clipping format: number[][][]
-    const p1 = [poly1.map(p => [p.x, p.y])];
-    const p2 = [poly2.map(p => [p.x, p.y])];
-    
-    const result = polygonClipping.intersection(p1 as any, p2 as any);
-    
-    // Result format: [[[x1, y1], [x2, y2], ...], ...]
-    return result.map(multiPoly => 
-      multiPoly[0].map(coord => ({ x: coord[0], y: coord[1] }))
-    );
+    // polygon-clipping expects MultiPolygon: Polygon[]
+    // Polygon = Ring[] (outer ring + holes)
+    // MultiPolygon = Polygon[]
+    const p1 = [[poly1.map(p => [p.x, p.y])]];
+    const p2 = [[poly2.map(p => [p.x, p.y])]];
+
+    const result = polygonClipping.intersection(p1 as any, p2 as any) as any;
+
+    // Collect outer rings only (holes ignored for now)
+    const out: Point[][] = [];
+    for (const polygon of result ?? []) {
+      const outerRing = polygon?.[0];
+      if (!outerRing || outerRing.length < 3) continue;
+      out.push(outerRing.map((c: number[]) => ({ x: c[0], y: c[1] })));
+    }
+    return out;
   } catch (error) {
     console.warn('Polygon intersection failed:', error);
     return [];
   }
 }
+
 
 /**
  * Diagonal-grid (45° döndürülmüş) pattern hesaplama - POLYGON-BASED WITH CUT INSTRUCTIONS
@@ -1179,19 +1056,24 @@ function calculateDiagonalGridLayout(
  */
 function differencePolygons(poly1: Point[], poly2: Point[]): Point[][] {
   try {
-    const p1 = [poly1.map(p => [p.x, p.y])];
-    const p2 = [poly2.map(p => [p.x, p.y])];
-    
-    const result = polygonClipping.difference(p1 as any, p2 as any);
-    
-    return result.map(multiPoly => 
-      multiPoly[0].map(coord => ({ x: coord[0], y: coord[1] }))
-    );
+    const p1 = [[poly1.map(p => [p.x, p.y])]];
+    const p2 = [[poly2.map(p => [p.x, p.y])]];
+
+    const result = polygonClipping.difference(p1 as any, p2 as any) as any;
+
+    const out: Point[][] = [];
+    for (const polygon of result ?? []) {
+      const outerRing = polygon?.[0];
+      if (!outerRing || outerRing.length < 3) continue;
+      out.push(outerRing.map((c: number[]) => ({ x: c[0], y: c[1] })));
+    }
+    return out;
   } catch (error) {
     console.warn('Polygon difference failed:', error);
     return [];
   }
 }
+
 
 /**
  * Kesim çizgilerini belirle (kullanılan parçanın kenarları - seramik kenarları)
@@ -1392,6 +1274,8 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
       console.log('');
     });
   }
+
+  
   
   // Summary
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
