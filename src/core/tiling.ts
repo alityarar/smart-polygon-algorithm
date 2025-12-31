@@ -441,6 +441,23 @@ function calculateHalfOffsetLayout(
   // Alan bazlı hesaplama: toplam kesim alanı / seramik alanı
   const tileArea = actualWidth * actualHeight;
   const tilesForCuts = Math.ceil(totalCutArea / tileArea);
+
+let tileSavings = 0;
+
+if (useScrap) {
+  const halfPieces = cutPieces.filter(p =>
+    Math.abs(p.requiredWidth - halfWidth) < 10
+  );
+
+  tileSavings = Math.floor(halfPieces.length / 2);
+
+  console.log('  - Yarım parça:', halfPieces.length);
+  console.log('  - Tam seramik tasarrufu:', tileSavings);
+}
+
+let actualTilesForCuts = Math.max(0, tilesForCuts - tileSavings);
+
+
   
 
   
@@ -451,32 +468,41 @@ function calculateHalfOffsetLayout(
   console.log('  - Kesim için seramik:', tilesForCuts);
   
   // Artık kullanımı simülasyonu (basitleştirilmiş)
-  let actualTilesForCuts = tilesForCuts;
+
   
   if (useScrap) {
     // Artık kullanımıyla: yarım parçalar eşleştirilebilir
     // 2 yarım = 1 tam → daha verimli
-    const halfPieces = cutPieces.filter(p => 
-      Math.abs(p.requiredWidth - halfWidth) < 10 || 
-      Math.abs(p.requiredHeight - halfWidth) < 10
-    );
-    
-    const numHalfPairs = Math.floor(halfPieces.length / 2);
-    scrapUsedCount = numHalfPairs;
-    
-    console.log('  - Yarım parça sayısı:', halfPieces.length);
-    console.log('  - Eşleştirilebilen çift:', numHalfPairs);
-    console.log('  - Artıktan karşılanan:', scrapUsedCount);
+    // Kaç yarım parça var
+const halfPieces = cutPieces.filter(p =>
+  Math.abs(p.requiredWidth - halfWidth) < 10
+);
+
+// 2 yarım = 1 tam seramik tasarrufu
+const tileSavings = Math.floor(halfPieces.length / 2);
+
+// Scrap’tan karşılanabilecek parça sayısı
+const scrapPiecesAvailable = tileSavings * 2;
+
+// Bu artık "kaç parça scrap kullanıldı" değil,
+// "kaç TAM SERAMİK tasarrufu yapıldı"
+scrapUsedCount = scrapPiecesAvailable;
+
+console.log('  - Yarım parça sayısı:', halfPieces.length);
+console.log('  - Tam seramik tasarrufu:', tileSavings);
+console.log('  - Scrap’tan karşılanabilecek parça:', scrapPiecesAvailable);
+
   }
   
   // Tüm parçaları yerleştir
-  for (const piece of requiredPieces) {
-    const allocatedFromScrap = useScrap && !piece.isFullTile && scrapUsedCount > 0;
-    
-    if (allocatedFromScrap && !piece.isFullTile) {
-      // Artıktan kullanıldı olarak işaretle
-      // (Basitleştirilmiş - gerçekte daha karmaşık)
-    }
+  let scrapPiecesLeft = scrapUsedCount;
+
+for (const piece of requiredPieces) {
+  const allocatedFromScrap = useScrap && !piece.isFullTile && scrapPiecesLeft > 0;
+
+  if (allocatedFromScrap) {
+    scrapPiecesLeft--;
+  }
     
     placedTiles.push({
       id: piece.id,
