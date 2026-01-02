@@ -268,10 +268,12 @@ function calculateGridLayout(
       });
     }
   }
+  
 
   const totalTilesNeeded = fullTilesConsumed + cutTilesConsumed;
   const wastePercentage = calculateWastePercentage(room.area || 0, totalTilesNeeded, tileArea);
 
+  
   return {
     tiles: placedTiles,
     fullTileCount: fullTilesConsumed,
@@ -304,6 +306,8 @@ function calculateGridLayout(
  * - Satır 1,3: 1 yarım + 3 tam + 1 yarım = 3 tam + 2 yarım
  * - Toplam tam: 14, Toplam yarım: 4 → 14 + (4/2) = 16 seramik
  */
+console.warn('🔥 calculateHalfOffsetLayout ÇALIŞTI');
+
 function calculateHalfOffsetLayout(
   room: RoomShape,
   effectiveWidth: number,
@@ -313,6 +317,7 @@ function calculateHalfOffsetLayout(
   useScrap: boolean
 ): TileLayout {
   const bbox = getBoundingBox(room.points);
+  const DEBUG = true; // false yapınca susar
   const cleanWidth = Math.round(bbox.width);
   const cleanHeight = Math.round(bbox.height);
   
@@ -410,6 +415,29 @@ function calculateHalfOffsetLayout(
   
   console.log('\nToplam gerekli parça sayısı:', requiredPieces.length);
   console.log('  - Tam boyut:', requiredPieces.filter(p => p.isFullTile).length);
+  if (DEBUG) {
+    const fullCount = requiredPieces.filter(p => p.isFullTile).length;
+    const cutCount = requiredPieces.length - fullCount;
+  
+    const halfPieces = requiredPieces.filter(p =>
+      !p.isFullTile && Math.abs(p.requiredWidth - halfWidth) < 10
+    );
+  
+    console.group('🧱 HALF-OFFSET | PHASE 1 SUMMARY');
+    console.table({
+      roomWidth_mm: cleanWidth,
+      roomHeight_mm: cleanHeight,
+      rows: numRows,
+      tileWidth_mm: actualWidth,
+      tileHeight_mm: actualHeight,
+      required_total: requiredPieces.length,
+      required_full: fullCount,
+      required_cut: cutCount,
+      required_halfPieces: halfPieces.length,
+    });
+    console.groupEnd();
+  }
+  
   console.log('  - Kesilmiş (yarım vs):', requiredPieces.filter(p => !p.isFullTile).length);
   
   // ===== PHASE 2: Malzeme Ayırma =====
@@ -456,6 +484,24 @@ if (useScrap) {
 }
 
 let actualTilesForCuts = Math.max(0, tilesForCuts - tileSavings);
+if (DEBUG) {
+  console.group('🧮 HALF-OFFSET | PHASE 2 CALC');
+  console.table({
+    fullTilesConsumed,
+    cutPieces_count: cutPieces.length,
+    halfPiece_count: cutPieces.filter(
+      p => Math.abs(p.requiredWidth - halfWidth) < 10
+    ).length,
+    totalCutArea_m2: Number((totalCutArea / 1e6).toFixed(4)),
+    tileArea_m2: Number((tileArea / 1e6).toFixed(4)),
+    tilesForCuts_raw: tilesForCuts,
+    tileSavings_fullTiles: tileSavings,
+    actualTilesForCuts,
+    scrapPiecesAvailable: tileSavings * 2,
+  });
+  console.groupEnd();
+}
+
 
 
   
@@ -470,29 +516,7 @@ let actualTilesForCuts = Math.max(0, tilesForCuts - tileSavings);
   // Artık kullanımı simülasyonu (basitleştirilmiş)
 
   
-  if (useScrap) {
-    // Artık kullanımıyla: yarım parçalar eşleştirilebilir
-    // 2 yarım = 1 tam → daha verimli
-    // Kaç yarım parça var
-const halfPieces = cutPieces.filter(p =>
-  Math.abs(p.requiredWidth - halfWidth) < 10
-);
-
-// 2 yarım = 1 tam seramik tasarrufu
-const tileSavings = Math.floor(halfPieces.length / 2);
-
-// Scrap’tan karşılanabilecek parça sayısı
-const scrapPiecesAvailable = tileSavings * 2;
-
-// Bu artık "kaç parça scrap kullanıldı" değil,
-// "kaç TAM SERAMİK tasarrufu yapıldı"
-scrapUsedCount = scrapPiecesAvailable;
-
-console.log('  - Yarım parça sayısı:', halfPieces.length);
-console.log('  - Tam seramik tasarrufu:', tileSavings);
-console.log('  - Scrap’tan karşılanabilecek parça:', scrapPiecesAvailable);
-
-  }
+  
   
   // Tüm parçaları yerleştir
   let scrapPiecesLeft = scrapUsedCount;
@@ -516,6 +540,19 @@ for (const piece of requiredPieces) {
       sourceType: allocatedFromScrap ? 'scrap' : (piece.isFullTile ? 'full' : 'cut'),
     });
   }
+
+  if (DEBUG) {
+    const fromScrap = placedTiles.filter(t => t.isFromScrap).length;
+  
+    console.group('♻️ HALF-OFFSET | SCRAP USAGE (REAL)');
+    console.table({
+      planned_scrapPiecesAvailable: scrapUsedCount,
+      actually_used_scrapPieces: fromScrap,
+      remaining_scrapPieces: scrapUsedCount - fromScrap,
+    });
+    console.groupEnd();
+  }
+  
   
   const totalTilesNeeded = fullTilesConsumed + actualTilesForCuts;
   
@@ -531,7 +568,17 @@ for (const piece of requiredPieces) {
     totalTilesNeeded,
     actualWidth * actualHeight
   );
-
+  if (DEBUG) {
+    console.group('✅ HALF-OFFSET | FINAL SUMMARY');
+    console.table({
+      fullTilesConsumed,
+      actualTilesForCuts,
+      totalTilesNeeded,
+      wastePercentage: Number(wastePercentage.toFixed(2)),
+    });
+    console.groupEnd();
+  }
+  
   return {
     tiles: placedTiles,
     fullTileCount: fullTilesConsumed,
@@ -1063,6 +1110,7 @@ function calculateDiagonalGridLayout(
     sourceType: p.groupType === 'center' ? 'full' : 'cut',
   }));
   
+  
   return {
     tiles: placedTiles,
     fullTileCount: purchasedA,
@@ -1126,7 +1174,7 @@ function identifyCutLines(
     const p1 = usedPieceLocal[i];
     const p2 = usedPieceLocal[(i + 1) % usedPieceLocal.length];
     
-    // Bu kenar seramik sınırında mı??
+    // Bu kenar seramik sınırında mı?
     const isOnTileEdge = 
       (Math.abs(p1.x - tileEdges.left) < tolerance && Math.abs(p2.x - tileEdges.left) < tolerance) ||
       (Math.abs(p1.x - tileEdges.right) < tolerance && Math.abs(p2.x - tileEdges.right) < tolerance) ||
