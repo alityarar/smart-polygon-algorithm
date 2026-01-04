@@ -1174,7 +1174,7 @@ function identifyCutLines(
     const p1 = usedPieceLocal[i];
     const p2 = usedPieceLocal[(i + 1) % usedPieceLocal.length];
     
-    // Bu kenar seramik sınırında mı?
+    // Bu kenar seramik sınırında mı??
     const isOnTileEdge = 
       (Math.abs(p1.x - tileEdges.left) < tolerance && Math.abs(p2.x - tileEdges.left) < tolerance) ||
       (Math.abs(p1.x - tileEdges.right) < tolerance && Math.abs(p2.x - tileEdges.right) < tolerance) ||
