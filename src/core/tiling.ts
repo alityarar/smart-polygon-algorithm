@@ -1182,7 +1182,7 @@ function identifyCutLines(
       (Math.abs(p1.y - tileEdges.top) < tolerance && Math.abs(p2.y - tileEdges.top) < tolerance);
     
     if (!isOnTileEdge) {
-      // Bu bir kesim çizgisi
+      // Bu bir kesim çizgisi.
       const dx = p2.x - p1.x;
       const dy = p2.y - p1.y;
       const length = Math.sqrt(dx * dx + dy * dy);
