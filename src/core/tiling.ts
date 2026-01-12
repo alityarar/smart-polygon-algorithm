@@ -1162,7 +1162,7 @@ function identifyCutLines(
   const halfH = tileHeight / 2;
   const tolerance = 0.1; // mm
   
-  // Seramik kenar koordinatları (yerel)
+  // Seramik kenar koordinatları (yerel)......
   const tileEdges = {
     left: -halfW,
     right: halfW,
