@@ -1183,7 +1183,7 @@ function identifyCutLines(
     
     if (!isOnTileEdge) {
       // Bu bir kesim çizgisi.
-.      const dx = p2.x - p1.x;
+      const dx = p2.x - p1.x;
       const dy = p2.y - p1.y;
       const length = Math.sqrt(dx * dx + dy * dy);
       
