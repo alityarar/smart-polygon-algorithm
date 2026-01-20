@@ -1201,7 +1201,7 @@ function identifyCutLines(
 }
 
 /**
- * Artık poligonun kullanılabilir olup olmadığını kontrol et..
+ * Artık poligonun kullanılabilir olup olmadığını kontrol et...
  */
 function isScrapUsable(
   scrap: ScrapPoly,
