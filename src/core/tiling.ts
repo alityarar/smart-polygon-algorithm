@@ -1228,7 +1228,7 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
   console.log('ÖNEMLİ: Önce tüm kesimleri yapın, sonra döşemeye başlayın!');
   console.log('─────────────────────────────────────────────────────────────');
   
-  // Group by model.
+  // Group by model
   const modelA = cutList.filter(c => c.model === 'A');
   const modelB = cutList.filter(c => c.model === 'B');
   
