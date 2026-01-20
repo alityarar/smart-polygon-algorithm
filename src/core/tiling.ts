@@ -1218,7 +1218,7 @@ function isScrapUsable(
 }
 
 /**
- * Detaylı kesim listesini yazdır (montajcı için).
+ * Detaylı kesim listesini yazdır (montajcı için)
  */
 function printDetailedCutList(cutList: CutInstruction[]): void {
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
