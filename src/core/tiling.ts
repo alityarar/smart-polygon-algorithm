@@ -1232,7 +1232,7 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
   const modelA = cutList.filter(c => c.model === 'A');
   const modelB = cutList.filter(c => c.model === 'B');
   
-  // Print Model A pieces.........gffgfdhfdghgfhdghdfhfg
+  // Print Model A pieces.........asdassadsadasdasd
   if (modelA.length > 0) {
     console.log('\n┌─────────────────────────────────────────────────────────┐');
     console.log('│  MODEL A - MERKEZ PARÇALAR (Minimal/Hiç Kesim Yok)     │');
