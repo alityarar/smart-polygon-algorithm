@@ -1243,6 +1243,15 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
   dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
   fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
   hfgdjhlkdfgjhklgdfjhkldgfhg
+  dfhjdf;lhjfdklhjflkdhjldfkghjfdklghsgdjfgjsdgsdfgsdkfgjdfslkjhglsdfjhldfjlg
+  gfdjhlfdgjhkfdgjhgdf
+  hfgdjhlkdfgjhklgdfjhkldgfhg
+  dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
+  fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
+  hfgdjhlkdfgjhklgdfjhkldgfhg
+  dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
+  fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
+  hfgdjhlkdfgjhklgdfjhkldgfhg
   dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
   fdgjhkgfdjhlkfdjhlfdlkghjdfhk
   fghdfhgdfh
