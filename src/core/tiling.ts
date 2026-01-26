@@ -1244,24 +1244,7 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
   fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
   hfgdjhlkdfgjhklgdfjhkldgfhg
   dfhjdf;lhjfdklhjflkdhjldfkghjfdklghsgdjfgjsdgsdfgsdkfgjdfslkjhglsdfjhldfjlg
-  gfdjhlfdgjhkfdgjhgdf
-  hfgdjhlkdfgjhklgdfjhkldgfhg
-  dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
-  fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
-  hfgdjhlkdfgjhklgdfjhkldgfhg
-  dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
-  fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhsgdjfgjsdgsdfgsdkfgjdfslkjhglsdfjhldfjlg
-  gfdjhlfdgjhkfdgjhgdf
-  hfgdjhlkdfgjhklgdfjhkldgfhg
-  dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
-  fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
-  hfgdjhlkdfgjhklgdfjhkldgfhg
-  dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
-  fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
-  hfgdjhlkdfgjhklgdfjhkldgfhg
-  dfhjdf;lhjfdklhjflkdhjldfkghjfdklghlfdgjhkfdgjhgdf
-  hfgdjhlkdfgjhklgdfjhkldgfhg
-  dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
+  gfdjhlfd
   fdgjhkgfdjhlkfdjhlfdlkghjdfhk
   fghdfhgdfh
   */
