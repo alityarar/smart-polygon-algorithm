@@ -1239,10 +1239,7 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
   hfgdjhlkdfgjhklgdfjhkldgfhg
   dfhjdf;lhjfdklhjflkdhjldfkghjfdklgh
   fdgjhkgfdjhlkfdjhlfdlkghjdfhkgfdjhlfdgjhkfdgjhgdf
-  hfgdjhlkdfgjhklfdklghsgdjfgjsdgsdfgsdkfgjdfslkjhglsdfjhldfjlg
-  gfdjhlfd
-  fdgjhkgfdjhlkfdjhlfdlkghjdfhk
-  fghdfhgdfh
+ 
   */
   if (modelA.length > 0) {
     console.log('\n┌─────────────────────────────────────────────────────────┐');
