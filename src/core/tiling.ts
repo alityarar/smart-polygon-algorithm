@@ -1349,7 +1349,11 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
     });
   }
 
-  
+  /*
+  akkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
+  asdasdsadasdasflkajflkasf
+  asfjalksfjdaklsfjasf
+  asldjaslfjaslkfdjas */
   
   // Summary
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
