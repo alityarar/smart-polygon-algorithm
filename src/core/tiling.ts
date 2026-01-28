@@ -1349,52 +1349,7 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
     });
   }
 
-  /*
-  akkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasfakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasfakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasfakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasfakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasfakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasfakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasflkajflkasf
-  asfjalksfjdaklsfjasakkldasjfkladjfksjdfklsdjfklsdjfkljsdklfjsldkfjd
-  asdasdsadasdasfl
-  asldjaslfjaslkfdjas */
+  
   
   // Summary
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
