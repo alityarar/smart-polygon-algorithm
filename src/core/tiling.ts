@@ -1294,7 +1294,12 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
       console.log('  Alan:', (cut.usedPiece.areaMm2 / 1000000).toFixed(4), 'm²');
       console.log('');
       
-      // Check if from scrap
+      // Check if from scrap?
+      /**sdfsdaasdjsdkjkjsdag
+       * asdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasd
+       */
       if (cut.fromScrap) {
         console.log('  ♻️  ARTIKTAN KULLANILACAK:');
         console.log('     Artık ID:', cut.fromScrap.scrapId);
@@ -1349,7 +1354,7 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
     });
   }
 
-  
+
   
   // Summary
   console.log('\n╔═══════════════════════════════════════════════════════════╗');
