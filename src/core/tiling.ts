@@ -1313,7 +1313,21 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
        * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
        * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
        * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
-       * sdafjlasdfjasdjfkasd
+       * sdafjlasdfjasdjfkasdsdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjkslsdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
        */
       if (cut.fromScrap) {
         console.log('  ♻️  ARTIKTAN KULLANILACAK:');
