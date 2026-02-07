@@ -1327,6 +1327,27 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
        * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
        * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
        * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjkslsdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjkslsdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjkslsdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
        * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
        */
       if (cut.fromScrap) {
