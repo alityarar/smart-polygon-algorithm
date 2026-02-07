@@ -1298,6 +1298,10 @@ function printDetailedCutList(cutList: CutInstruction[]): void {
       /**sdfsdaasdjsdkjkjsdag
        * asdfgjsdfsdfaasdflasdfasd
        * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
+       * sdafjlasdfjasdjfkasdasdfgjsdfsdfaasdflasdfasd
+       * sadfjaasdkfjasdfjasdkfjasdkfasdfjksl
        * sdafjlasdfjasdjfkasd
        */
       if (cut.fromScrap) {
